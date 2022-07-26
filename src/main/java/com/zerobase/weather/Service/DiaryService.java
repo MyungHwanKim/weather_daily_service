@@ -1,5 +1,6 @@
 package com.zerobase.weather.Service;
 
+import com.zerobase.weather.WeatherApplication;
 import com.zerobase.weather.domain.DateWeather;
 import com.zerobase.weather.domain.Diary;
 import com.zerobase.weather.repository.DateWeatherRepository;
@@ -8,6 +9,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,8 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
     private  final DateWeatherRepository dateWeatherRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(WeatherApplication.class);
+
     public DiaryService(DiaryRepository diaryRepository, DateWeatherRepository dateWeatherRepository) {
         this.diaryRepository = diaryRepository;
         this.dateWeatherRepository = dateWeatherRepository;
@@ -41,12 +46,13 @@ public class DiaryService {
     @Transactional
     @Scheduled(cron = "0 0 1 * * *")
     public void saveWeatherDate() {
+        logger.info("save the weather date today");
         dateWeatherRepository.save(getWeatherFromApi());
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void createDiary(LocalDate date, String text) {
-
+        logger.info("started to create diary");
         // 날씨 데이터 가져오기(API 에서 가져오기? DB 에서 가져오기?)
         DateWeather dateWeather = getDateWeather(date);
 
@@ -55,6 +61,7 @@ public class DiaryService {
         nowDiary.setDateWeather(dateWeather);
         nowDiary.setText(text);
         diaryRepository.save(nowDiary);
+        logger.info("end to create diary");
     }
 
     private DateWeather getWeatherFromApi() {
@@ -83,6 +90,7 @@ public class DiaryService {
 
     @Transactional(readOnly = true)
     public List<Diary> readDiary(LocalDate date) {
+        logger.debug("read diary");
         return diaryRepository.findAllByDate(date);
     }
 
@@ -97,7 +105,9 @@ public class DiaryService {
     }
 
     public void deleteDiary(LocalDate date) {
+        logger.info("started to delete diary");
         diaryRepository.deleteAllByDate(date);
+        logger.info("end to delete diary");
     }
 
     private String getWeatherString() {
