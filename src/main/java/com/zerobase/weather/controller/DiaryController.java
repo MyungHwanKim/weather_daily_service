@@ -1,6 +1,6 @@
-package com.zerobase.weather.Controller;
+package com.zerobase.weather.controller;
 
-import com.zerobase.weather.Service.DiaryService;
+import com.zerobase.weather.service.DiaryService;
 import com.zerobase.weather.domain.Diary;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

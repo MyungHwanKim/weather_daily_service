@@ -1,4 +1,4 @@
-package com.zerobase.weather.Service;
+package com.zerobase.weather.service;
 
 import com.zerobase.weather.WeatherApplication;
 import com.zerobase.weather.domain.DateWeather;
